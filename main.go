@@ -5,6 +5,8 @@ import (
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
+	"gonum.org/v1/plot/vg/draw"
+	"image/color"
 	"math"
 	"math/rand"
 	"sort"
@@ -20,7 +22,7 @@ type Point struct {
 	y float64
 }
 
-const Radius = 6
+const Radius = 2
 
 var totalSubscribers = math.Pow10(Radius)
 
@@ -49,10 +51,23 @@ func main() {
 	if err != nil {
 		fmt.Printf("Failed to plot distribution: %v", err)
 	}
+
+	err = plotSubscribers(subscribers)
+
+	if err != nil {
+		fmt.Printf("Failed to plot subscribers: %v", err)
+	}
 }
 
 func getRandomPoint() (point Point) {
-	return Point{-Radius + rand.Float64()*(2*Radius), -Radius + rand.Float64()*(2*Radius)}
+	theta := rand.Float64() * 2 * math.Pi
+	u := rand.Float64()
+	rad := Radius * math.Sqrt(u)
+	x := rad * math.Cos(theta)
+	y := rad * math.Sin(theta)
+
+	return Point{x, y}
+
 }
 
 func getDistance(point Point) float64 {
@@ -106,7 +121,39 @@ func plotDistribution(subscribers []Subscriber) error {
 	h.Normalize(1)
 	p.Add(h)
 
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, "hist.png"); err != nil {
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "distribution.png"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func plotSubscribers(subscribers []Subscriber) error {
+	p := plot.New()
+
+	pts := make(plotter.XYs, len(subscribers))
+
+	for i := range pts {
+		pts[i].X = subscribers[i].location.x
+		pts[i].Y = subscribers[i].location.y
+	}
+
+	p.Title.Text = "Subscribers"
+	p.X.Label.Text = "X-axis"
+	p.Y.Label.Text = "Y-axis"
+
+	s, err := plotter.NewScatter(pts)
+	if err != nil {
+		return err
+	}
+
+	s.Color = color.RGBA{R: 255, A: 255}
+	s.Shape = draw.CircleGlyph{}
+	s.Radius = vg.Points(.8)
+
+	p.Add(s)
+
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "subscribers.png"); err != nil {
 		return err
 	}
 
