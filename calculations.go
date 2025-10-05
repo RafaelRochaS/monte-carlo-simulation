@@ -5,15 +5,15 @@ import (
 	"math/rand/v2"
 )
 
-func getRandomPoint(dist Distribution) (point Point) {
+func getRandomPoint(dist Distribution, radius float64) (point Point) {
 	theta := rand.Float64() * 2 * math.Pi
 
 	var rad float64
 	if dist == Area {
 		u := rand.Float64()
-		rad = Radius * math.Sqrt(u)
+		rad = radius * math.Sqrt(u)
 	} else {
-		rad = rand.Float64() * Radius
+		rad = rand.Float64() * radius
 	}
 
 	x := rad * math.Cos(theta)

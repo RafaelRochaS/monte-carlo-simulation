@@ -29,7 +29,8 @@ func plotDistribution(subscribers []Subscriber, dist Distribution, number int) e
 	}
 
 	p := plot.New()
-	p.Title.Text = "Subscribers Distribution"
+	p.Title.Text = fmt.Sprintf("Subscribers Distribution - %s Distribution - Coverage Radius %d", dist, number)
+	p.Title.TextStyle.Font.Size = vg.Points(20)
 
 	v := make(plotter.Values, len(subscribers))
 	for i := range v {
@@ -44,7 +45,7 @@ func plotDistribution(subscribers []Subscriber, dist Distribution, number int) e
 	h.Normalize(1)
 	p.Add(h)
 
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, fmt.Sprintf("output/distribution_%s_%d.png", dist, number)); err != nil {
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, fmt.Sprintf("output/distribution_%s_%d.png", dist, number)); err != nil {
 		return err
 	}
 
@@ -67,7 +68,8 @@ func plotSubscribers(subscribers []Subscriber, dist Distribution, number int) er
 		pts[i].Y = subscribers[i].location.y
 	}
 
-	p.Title.Text = "Subscribers"
+	p.Title.Text = fmt.Sprintf("Subscribers Plot - %s Distribution - Coverage Radius %d", dist, number)
+	p.Title.TextStyle.Font.Size = vg.Points(20)
 	p.X.Label.Text = "X-axis"
 	p.Y.Label.Text = "Y-axis"
 
@@ -82,7 +84,7 @@ func plotSubscribers(subscribers []Subscriber, dist Distribution, number int) er
 
 	p.Add(s)
 
-	if err := p.Save(4*vg.Inch, 4*vg.Inch, fmt.Sprintf("output/subscribers_%s_%d.png", dist, number)); err != nil {
+	if err := p.Save(10*vg.Inch, 10*vg.Inch, fmt.Sprintf("output/subscribers_%s_%d.png", dist, number)); err != nil {
 		return err
 	}
 
